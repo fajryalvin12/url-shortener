@@ -1,20 +1,34 @@
 package main
 
 import (
-	"fmt"
 	"url-shortener/internal/config"
+	"url-shortener/internal/handler"
 	"url-shortener/internal/repository"
+	"url-shortener/internal/service"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	// connect with db
+	// DB
 	db := config.ConnectDB()
 
-	// init repo
+	// repo
 	repo := repository.URLRepository{DB: db}
-	
-	// init service 
-	urlService := Service.CreateShortURL(repo)
 
-	fmt.Println("Running the server at port 8000")
+	// service
+	urlService := service.URLService{&repo}
+
+	// handler
+	urlHandler := handler.URLHandler{Service: &urlService}
+
+	// router
+	r := gin.Default()
+
+	// routes
+	r.POST("/v1/shorten", urlHandler.ShortenURL)
+	r.GET("/:short_code", urlHandler.RedirectURL)
+
+	// run
+	r.Run(":8000")
 }
