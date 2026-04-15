@@ -1,1 +1,58 @@
 package service
+
+import (
+	"url-shortener/internal/model"
+	"url-shortener/internal/repository"
+)
+
+type URLService struct {
+	repo repository.URLRepository
+}
+
+func EncodeToBase62(id int) string {
+	charset := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
+	// convert id by encoded string
+	if id == 0 {
+		return string(charset[id])
+	}
+
+	var encoded string
+
+	for id > 0 {
+		remainder := id % 62
+		encoded += string(charset[remainder])
+		id = id / 62
+	}
+
+	var reversed string
+
+	// reverse the encoded string
+	for j := len(encoded) - 1; j >= 0; j-- {
+		reversed += string(encoded[j])
+	}
+
+	return reversed
+}
+
+func (s URLService) CreateShotURL(original_url string) (string, error) {
+
+	// panggil repo.insert => dapet id
+	createdId, err := s.repo.Insert(model.URL{OriginalUrl: original_url})
+
+	if err != nil {
+		return "", err
+	}
+
+	// generate short_code dengan cara encode retrieved id 
+	shortCode := EncodeToBase62(createdId)
+	 
+	// panggil repo.updateShortCode 
+	err = s.repo.UpdateShortCode(createdId, shortCode)
+
+	if err != nil {
+		return "", err
+	}
+
+	return shortCode, nil
+}

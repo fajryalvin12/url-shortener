@@ -10,14 +10,6 @@ type URLRepository struct {
 	DB *sqlx.DB
 }
 
-// func Insert (db URLRepository, url *model.URL) int {
-// 	var id int 
-
-// 	insert := db.DB.QueryRow("INSERT INTO urls (original_url) VALUES ($1) RETURNING id", url.OriginalUrl).Scan(&id)
-	
-// 	return data
-// }
-
 func (repo URLRepository) Insert(url model.URL) (int, error) {
 	var id int
 	
@@ -28,4 +20,14 @@ func (repo URLRepository) Insert(url model.URL) (int, error) {
 	}
 
 	return id, nil 
+}
+
+func (repo URLRepository) UpdateShortCode (id int, shortCode string) error {
+	_, err := repo.DB.Exec("UPDATE urls SET short_code = $1 WHERE id = $2", shortCode, id)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
