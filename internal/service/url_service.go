@@ -6,7 +6,7 @@ import (
 )
 
 type URLService struct {
-	repo repository.URLRepository
+	repo *repository.URLRepository
 }
 
 func EncodeToBase62(id int) string {
@@ -35,7 +35,7 @@ func EncodeToBase62(id int) string {
 	return reversed
 }
 
-func (s URLService) CreateShotURL(original_url string) (string, error) {
+func (s URLService) CreateShortURL(original_url string) (string, error) {
 
 	// panggil repo.insert => dapet id
 	createdId, err := s.repo.Insert(model.URL{OriginalUrl: original_url})
