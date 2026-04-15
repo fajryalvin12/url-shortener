@@ -8,7 +8,7 @@ import (
 )
 
 type URLHandler struct {
-	service *service.URLService
+	Handler *service.URLService
 }
 
 func (h URLHandler) ShortenURL(c *gin.Context) {
@@ -27,7 +27,7 @@ func (h URLHandler) ShortenURL(c *gin.Context) {
 	} 
 
 	// call services 
-	shorten, err := h.service.CreateShortURL(urls.OriginalUrl)
+	shorten, err := h.Handler.CreateShortURL(urls.OriginalUrl)
 
 	if err !=  nil {
 		c.JSON(500, gin.H{
@@ -46,4 +46,21 @@ func (h URLHandler) ShortenURL(c *gin.Context) {
 			"short_code": shorten,
 		},
 	})
+}
+
+func (h URLHandler) RedirectURL(c *gin.Context) {
+	shortCode := c.Param("short_code")
+
+	originalURL, err := h.Handler.GetOriginalURL(shortCode) 
+	if err != nil {
+		c.JSON(404, gin.H{
+			"code": 404,
+			"message": "URL Not found",
+			"error": err.Error(),
+		})
+
+		return
+	}
+
+	c.Redirect(302, originalURL)
 }

@@ -31,3 +31,16 @@ func (repo URLRepository) UpdateShortCode (id int, shortCode string) error {
 
 	return nil
 }
+
+func (repo URLRepository) FindByShortCode (short_code string) (string, error) {
+	var url string
+
+	query := "SELECT original_url FROM urls WHERE short_code = $1"
+	err := repo.DB.QueryRow(query, short_code).Scan(&url)
+
+	if err != nil {
+		return "", err
+	} 
+
+	return url, nil
+}

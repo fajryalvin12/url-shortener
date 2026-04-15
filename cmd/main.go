@@ -4,22 +4,17 @@ import (
 	"fmt"
 	"url-shortener/internal/config"
 	"url-shortener/internal/repository"
-	"url-shortener/internal/service"
 )
 
 func main() {
+	// connect with db
 	db := config.ConnectDB()
-	
-	// url := model.URL{
-	// 	OriginalUrl: "https://www.linkedin.com/in/fajryalvinhidayat/",
-	// }
-	// createNewData, _ := repo.Insert(url)
 
+	// init repo
 	repo := repository.URLRepository{DB: db}
-
-	shortCode :=  service.EncodeToBase62(2)
-	updShortCode := repo.UpdateShortCode(2, shortCode)
-	fmt.Println(updShortCode)
+	
+	// init service 
+	urlService := Service.CreateShortURL(repo)
 
 	fmt.Println("Running the server at port 8000")
 }
