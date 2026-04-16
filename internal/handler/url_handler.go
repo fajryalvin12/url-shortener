@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"net/url"
+	"strings"
 	"url-shortener/internal/model"
 	"url-shortener/internal/service"
 
@@ -26,6 +28,67 @@ func (h URLHandler) ShortenURL(c *gin.Context) {
 		return
 	} 
 
+	// validate input 
+	ori := urls.OriginalUrl
+
+	if ori == "" {
+		c.JSON(400, gin.H{
+			"code": 400,
+			"message": "URL cannot be empty",
+			"data": gin.H{
+				"original_url": ori,
+			},
+		})
+
+		return
+	}
+
+	// add default scheme if the url didn't have 
+	isContainScheme1 := strings.HasPrefix(ori, "https://")
+	isContainScheme2 := strings.HasPrefix(ori, "http://")
+
+	if !isContainScheme1 && !isContainScheme2 {
+		ori = "https://" + ori
+	}
+
+	isValidURL, err := url.ParseRequestURI(ori)
+
+	if err != nil {
+		c.JSON(400, gin.H{
+			"code": 400,
+			"message": "Invalid URL Format",
+			"data": gin.H{
+				"original_url": ori,
+			},
+		})
+
+		return
+	}
+	
+	if isValidURL.Scheme != "http" && isValidURL.Scheme != "https" {
+		c.JSON(400, gin.H{
+			"code": 400,
+			"message": "Invalid URL Scheme",
+			"data": gin.H{
+				"scheme": isValidURL.Scheme,
+			},
+		})
+
+		return
+	}
+
+	if isValidURL.Host == "" {
+		c.JSON(400, gin.H{
+			"code": 400,
+			"message": "Invalid URL Host",
+			"data": gin.H{
+				"host": isValidURL.Host,
+			},
+		})
+
+		return
+	}
+
 	// call services 
 	baseURL := "http://localhost:8000"
 	shorten, err := h.Service.CreateShortURL(urls.OriginalUrl)
@@ -41,7 +104,6 @@ func (h URLHandler) ShortenURL(c *gin.Context) {
 	}
 
 	shortURL := baseURL + "/" + shorten
-
 
 	c.JSON(201, gin.H{
 		"code": 201,
