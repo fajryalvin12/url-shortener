@@ -3,7 +3,7 @@ package handler
 import (
 	"net/url"
 	"strings"
-	"url-shortener/internal/model"
+	"url-shortener/internal/dto"
 	"url-shortener/internal/service"
 
 	"github.com/gin-gonic/gin"
@@ -14,7 +14,7 @@ type URLHandler struct {
 }
 
 func (h URLHandler) ShortenURL(c *gin.Context) {
-	var urls model.URL
+	var urls dto.URLRequest
 
 	// retrieve data from json request body, then bind it 
 	err := c.ShouldBindJSON(&urls) 
@@ -93,7 +93,7 @@ func (h URLHandler) ShortenURL(c *gin.Context) {
 	baseURL := "http://localhost:8000"
 	shorten, err := h.Service.CreateShortURL(urls.OriginalUrl)
 
-	if err !=  nil {
+	if err != nil {
 		c.JSON(500, gin.H{
 			"code": 500,
 			"message": "Failed to create shorten url",

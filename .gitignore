@@ -1,5 +1,38 @@
+# ======================
+# Go (Backend)
+# ======================
+/backend/bin/
+/backend/vendor/
+*.exe
+
+# ======================
+# Node / Next.js (Frontend)
+# ======================
+/frontend/node_modules/
+/frontend/.next/
+/frontend/out/
+
+# ======================
+# Env files
+# ======================
 .env
+backend/.env
+frontend/.env.local
 
-.gitignore
+# ======================
+# Logs
+# ======================
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
 
-./internal/db
+# ======================
+# OS
+# ======================
+.DS_Store
+
+# ======================
+# Misc
+# ======================
+*.pem
