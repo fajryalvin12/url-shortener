@@ -44,7 +44,7 @@ export default function Home() {
           onSubmit={onSubmit}
           className="flex flex-col gap-4 bg-black p-6 rounded-xl text-white"
         >
-          <h1>URL Shortener App</h1>
+          <h1 className="text-center">URL Shortener App</h1>
           <div className="flex flex-col">
             <label>Insert the URL here : </label>
             <input
@@ -63,8 +63,13 @@ export default function Home() {
           {error && <div style={{ color: "red" }}>{error}</div>}
           {shortUrl && (
             <>
-              <label style={{ color: "green" }}>Short URL :</label>
-              <a href={shortUrl} style={{ color: "green" }}>
+              <label style={{ color: "green" }}>
+                Short URL (click to open) :
+              </label>
+              <a
+                href={shortUrl}
+                className="text-blue-400 hover:underline hover:text-blue-600 cursor-pointer"
+              >
                 {shortUrl}
               </a>
             </>
