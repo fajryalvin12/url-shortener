@@ -6,6 +6,7 @@ import (
 	"url-shortener/internal/repository"
 	"url-shortener/internal/service"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -22,8 +23,10 @@ func main() {
 	// handler
 	urlHandler := handler.URLHandler{Service: &urlService}
 
-	// router
+	// router + cors middleware assignment
 	r := gin.Default()
+
+	r.Use(cors.Default())
 
 	// routes
 	r.POST("/v1/shorten", urlHandler.ShortenURL)
