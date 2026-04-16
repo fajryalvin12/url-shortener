@@ -6,7 +6,7 @@ import (
 )
 
 type URLService struct {
-	Service *repository.URLRepository
+	Repo *repository.URLRepository
 }
 
 func EncodeToBase62(id int) string {
@@ -38,7 +38,7 @@ func EncodeToBase62(id int) string {
 func (s URLService) CreateShortURL(original_url string) (string, error) {
 
 	// panggil repo.insert => dapet id
-	createdId, err := s.Service.Insert(model.URL{OriginalUrl: original_url})
+	createdId, err := s.Repo.Insert(model.URL{OriginalUrl: original_url})
 
 	if err != nil {
 		return "", err
@@ -48,7 +48,7 @@ func (s URLService) CreateShortURL(original_url string) (string, error) {
 	shortCode := EncodeToBase62(createdId)
 	 
 	// panggil repo.updateShortCode 
-	err = s.Service.UpdateShortCode(createdId, shortCode)
+	err = s.Repo.UpdateShortCode(createdId, shortCode)
 
 	if err != nil {
 		return "", err
@@ -58,7 +58,7 @@ func (s URLService) CreateShortURL(original_url string) (string, error) {
 }
 
 func (s URLService) GetOriginalURL(short_code string) (string, error) {
-	origin, err := s.Service.FindByShortCode(short_code)
+	origin, err := s.Repo.FindByShortCode(short_code)
 
 	if err != nil {
 		return "", err

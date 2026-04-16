@@ -8,14 +8,14 @@ import (
 )
 
 type URLHandler struct {
-	Handler *service.URLService
+	Service *service.URLService
 }
 
 func (h URLHandler) ShortenURL(c *gin.Context) {
 	var urls model.URL
 
 	// retrieve data from json request body, then bind it 
-	err := c.Bind(&urls) 
+	err := c.ShouldBindJSON(&urls) 
 	if err != nil {
 		c.JSON(400, gin.H{
 			"code": 400,
@@ -27,7 +27,8 @@ func (h URLHandler) ShortenURL(c *gin.Context) {
 	} 
 
 	// call services 
-	shorten, err := h.Handler.CreateShortURL(urls.OriginalUrl)
+	baseURL := "http://localhost:8000"
+	shorten, err := h.Service.CreateShortURL(urls.OriginalUrl)
 
 	if err !=  nil {
 		c.JSON(500, gin.H{
@@ -39,11 +40,15 @@ func (h URLHandler) ShortenURL(c *gin.Context) {
 		return
 	}
 
+	shortURL := baseURL + "/" + shorten
+
+
 	c.JSON(201, gin.H{
 		"code": 201,
-		"message": "Success create data",
+		"message": "URL shortened successfully",
 		"data": gin.H{
-			"short_code": shorten,
+			"short_url": shortURL,
+			"original_url": urls.OriginalUrl,
 		},
 	})
 }
@@ -51,7 +56,7 @@ func (h URLHandler) ShortenURL(c *gin.Context) {
 func (h URLHandler) RedirectURL(c *gin.Context) {
 	shortCode := c.Param("short_code")
 
-	originalURL, err := h.Handler.GetOriginalURL(shortCode) 
+	originalURL, err := h.Service.GetOriginalURL(shortCode) 
 	if err != nil {
 		c.JSON(404, gin.H{
 			"code": 404,
