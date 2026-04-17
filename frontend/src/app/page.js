@@ -15,13 +15,16 @@ export default function Home() {
     const url = event.currentTarget.original_url.value;
 
     try {
-      const response = await fetch("http://localhost:8000/v1/shorten", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        "https://ruckus-resize-launch.ngrok-free.dev/v1/shorten",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ original_url: url }),
         },
-        body: JSON.stringify({ original_url: url }),
-      });
+      );
 
       if (!response.ok) {
         setError(response.message);
